@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bangalore Surface Temperature, May 2023</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.5.0/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+        .legend { position: absolute; bottom: 20px; right: 20px; background-color: rgba(255, 255, 255, 0.8); padding: 10px; border-radius: 4px; display: flex; align-items: flex-end; }
+    .legend-color-ramp {width: 200px; height: 20px; border-radius: 4px; background: linear-gradient(to right, #1a9850,#66bd63,#a6d96a
+, #d9ef8b, #fee08b, #fdae61, #f46d43, #d73027); }
+    .legend-labels { display: flex; justify-content: space-between; width: 200px; margin-left: 10px; }
+    .legend-label { font-size: 12px; margin-left: 10px; margin-right: 10px; }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="legend">
+        Bangalore Surface Temperature, Landsat 9, May, 2023
+        <div class="legend-labels">
+            <div class="legend-label">Cool </div>
+            <div class="legend-color-ramp"></div>
+            <div class="legend-label">Hot</div>
+        </div>
+      </div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvaGFja2VyIiwiYSI6ImNsajN4ZnA0MDFpYWczZ3A5MWxnZHBkdG8ifQ.Sot_30eI1tfJ6sfNNxPHtQ';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11', // Replace with your preferred Mapbox style
+            center: [77.5897, 12.9769],
+            zoom: 12
+        });
+
+        map.on('load', () => {
+            map.addSource('raster-source', {
+                type: 'raster',
+                tiles: ["https://titiler.xyz/cog/tiles/WebMercatorQuad/{z}/{x}/{y}@1x?url=https%3A%2F%2Fds-geohacker.s3.amazonaws.com%2Fmay-2023.tif&colormap=%5B%5B%5B23933%2C+25258%5D%2C+%5B26%2C+152%2C+80%2C+255%5D%5D%2C+%5B%5B25259%2C+25491%5D%2C+%5B102%2C+189%2C+99%2C+255%5D%5D%2C+%5B%5B25492%2C+25686%5D%2C+%5B166%2C+217%2C+106%2C+255%5D%5D%2C+%5B%5B25687%2C+25866%5D%2C+%5B217%2C+239%2C+139%2C+255%5D%5D%2C+%5B%5B25867%2C+26052%5D%2C+%5B254%2C+224%2C+139%2C+255%5D%5D%2C+%5B%5B26053%2C+26294%5D%2C+%5B253%2C+174%2C+97%5D%5D%2C+%5B%5B26295%2C+26632%5D%2C+%5B244%2C+109%2C+67%2C+255%5D%5D%2C+%5B%5B26633%2C+28301%5D%2C+%5B215%2C+48%2C+39%2C+255%5D%5D%5D"],
+                tileSize: 256,
+            });
+
+            map.addLayer({
+                id: 'raster-layer',
+                type: 'raster',
+                source: 'raster-source',
+                paint: {
+                    'raster-opacity': 0.8
+                }
+            });
+            var firstSymbolId;
+            var labelLayerId = 'road-label'
+            var layers = map.getStyle().layers;
+            map.moveLayer(labelLayerId);
+            map.moveLayer('state-label');
+            map.moveLayer('settlement-label');
+            map.moveLayer('settlement-subdivision-label');
+        });
+    </script>
+</body>
+</html>
